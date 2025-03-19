@@ -35,6 +35,10 @@ jobs:
         run: |
           cargo build --release --verbose
 
+      - name: 'Tar files'
+        run: tar -cvf geode-linux-installer.tar ./target/release/geode-linux-installer-rs
+
       - uses: actions/upload-artifact@v4
         with: 
-          path: ./target/release/geode-linux-installer-rs
+          name: Geode Linux Installer
+          path: geode-linux-installer.tar
