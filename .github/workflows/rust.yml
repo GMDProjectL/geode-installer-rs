@@ -1,65 +1,79 @@
-runs-on: ubuntu-latest
-strategy:
-  matrix:
-    include:
-      - rust-target: x86_64-unknown-linux-musl
-        os-arch: x86_64
+name: Build an installer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
 env:
-  CROSS_SYSROOT: /mnt/alpine-${{ matrix.os-arch }}
-steps:
-  - uses: actions/checkout@v1
+  CARGO_TERM_COLOR: always
 
-  - name: Install Requests for Python
-    run: |
-      sudo apt-get install python3-requests
-  
-  - name: Get the latest Geode zipball
-    run: |
-      python3 get-latest-geode.py
+jobs:
+  build:
 
-  - name: Set up Alpine Linux for ${{ matrix.os-arch }} (target arch)
-    id: alpine-target
-    uses: jirutka/setup-alpine@v1
-    with:
-      arch: ${{ matrix.os-arch }}
-      branch: edge
-      packages: >
-        dbus-dev
-        dbus-static
-      shell-name: alpine-target.sh
-
-  - name: Set up Alpine Linux for x86_64 (build arch)
-    uses: jirutka/setup-alpine@v1
-    with:
-      arch: x86_64
-      packages: >
-        build-base
-        pkgconf
-        lld
-        rustup
-      volumes: ${{ steps.alpine-target.outputs.root-path }}:${{ env.CROSS_SYSROOT }}
-      shell-name: alpine.sh
-
-  - name: Install Rust stable toolchain via rustup
-    run: rustup-init --target ${{ matrix.rust-target }} --default-toolchain stable --profile minimal -y
-    shell: alpine.sh {0}
-
-  - name: Build statically linked binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - rust-target: x86_64-unknown-linux-musl
+            os-arch: x86_64
     env:
-      CARGO_BUILD_TARGET: ${{ matrix.rust-target }}
-      CARGO_PROFILE_RELEASE_STRIP: symbols
-      PKG_CONFIG_ALL_STATIC: '1'
-      PKG_CONFIG_LIBDIR: ${{ env.CROSS_SYSROOT }}/usr/lib/pkgconfig
-      RUSTFLAGS: -C linker=/usr/bin/ld.lld
-      SYSROOT: /dummy  # workaround for https://github.com/rust-lang/pkg-config-rs/issues/102
-    run: |
-      # Workaround for https://github.com/rust-lang/pkg-config-rs/issues/102.
-      echo -e '#!/bin/sh\nPKG_CONFIG_SYSROOT_DIR=${{ env.CROSS_SYSROOT }} exec pkgconf "$@"' \
-          | install -m755 /dev/stdin pkg-config
-      export PKG_CONFIG="$(pwd)/pkg-config"
-      cargo build --release --locked --verbose
-    shell: alpine.sh {0}
+      CROSS_SYSROOT: /mnt/alpine-${{ matrix.os-arch }}
+    steps:
+      - uses: actions/checkout@v1
 
-  - uses: actions/upload-artifact@v4
-    with: 
-      path: ./target/release/geode-linux-installer-rs
+      - name: Install Requests for Python
+        run: |
+          sudo apt-get install python3-requests
+      
+      - name: Get the latest Geode zipball
+        run: |
+          python3 get-latest-geode.py
+
+      - name: Set up Alpine Linux for ${{ matrix.os-arch }} (target arch)
+        id: alpine-target
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: ${{ matrix.os-arch }}
+          branch: edge
+          packages: >
+            dbus-dev
+            dbus-static
+          shell-name: alpine-target.sh
+
+      - name: Set up Alpine Linux for x86_64 (build arch)
+        uses: jirutka/setup-alpine@v1
+        with:
+          arch: x86_64
+          packages: >
+            build-base
+            pkgconf
+            lld
+            rustup
+          volumes: ${{ steps.alpine-target.outputs.root-path }}:${{ env.CROSS_SYSROOT }}
+          shell-name: alpine.sh
+
+      - name: Install Rust stable toolchain via rustup
+        run: rustup-init --target ${{ matrix.rust-target }} --default-toolchain stable --profile minimal -y
+        shell: alpine.sh {0}
+
+      - name: Build statically linked binary
+        env:
+          CARGO_BUILD_TARGET: ${{ matrix.rust-target }}
+          CARGO_PROFILE_RELEASE_STRIP: symbols
+          PKG_CONFIG_ALL_STATIC: '1'
+          PKG_CONFIG_LIBDIR: ${{ env.CROSS_SYSROOT }}/usr/lib/pkgconfig
+          RUSTFLAGS: -C linker=/usr/bin/ld.lld
+          SYSROOT: /dummy  # workaround for https://github.com/rust-lang/pkg-config-rs/issues/102
+        run: |
+          # Workaround for https://github.com/rust-lang/pkg-config-rs/issues/102.
+          echo -e '#!/bin/sh\nPKG_CONFIG_SYSROOT_DIR=${{ env.CROSS_SYSROOT }} exec pkgconf "$@"' \
+              | install -m755 /dev/stdin pkg-config
+          export PKG_CONFIG="$(pwd)/pkg-config"
+          cargo build --release --locked --verbose
+        shell: alpine.sh {0}
+
+      - uses: actions/upload-artifact@v4
+        with: 
+          path: ./target/release/geode-linux-installer-rs
