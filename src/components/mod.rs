@@ -15,13 +15,13 @@ pub fn render_title(ui: &Ui) {
     title_font_ptr.pop();
 }
 
-pub fn render_colored_btn(ui: &Ui, label: &str, alternalte: bool) -> bool {
+pub fn render_colored_btn(ui: &Ui, label: &str, alt: bool) -> bool {
     let mut bg_col = [1.0, 1.0, 1.0, 1.0];
     let mut text_col = [0.0, 0.0, 0.0, 1.0];
     let mut bg_hover_col = [0.8, 0.8, 0.8, 1.0];
     let mut bg_active_col = [0.6, 0.6, 0.6, 1.0];
 
-    if alternalte {
+    if alt {
         bg_col = [0.3, 0.3, 0.3, 1.0];
         text_col = [1.0, 1.0, 1.0, 1.0];
         bg_hover_col = [0.4, 0.4, 0.4, 1.0];
