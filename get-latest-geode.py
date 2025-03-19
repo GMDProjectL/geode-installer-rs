@@ -24,6 +24,9 @@ def get_windows_zip_link():
 def download_zip_to_destination(zip_url, destination_dir):
     zip_response = requests.get(zip_url, stream=True)
     zip_file_path = os.path.join(destination_dir, "modloader.zip")
+
+    os.mkdir(destination_dir)
+
     with open(zip_file_path, 'wb') as f:
         for chunk in zip_response.iter_content(chunk_size=1024): 
             if chunk:
