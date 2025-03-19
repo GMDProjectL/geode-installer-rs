@@ -12,7 +12,6 @@ mod install;
 async fn main() {
     let mut state = State::default();
     state.install_variant = "steam";
-    state.show_successful_installation_message = false;
 
     support::simple_init("Geode Installer", move |_, ui| {
         ui.window("Hello world")
@@ -52,16 +51,6 @@ async fn main() {
                     state.install_variant = "steam";
                 }
 
-                if state.show_successful_installation_message {
-                    ui.set_cursor_pos([20.0, ui.cursor_pos()[1] + 20.0]);
-
-                    ui.text_colored(
-                        [0.0, 1.0, 0.0, 0.7], 
-                        "Geode installed successfully!"
-                    );
-                }
-
-
                 ui.set_cursor_pos([10.0, 250.0]);
                 if render_colored_btn(&ui, "Install", false) {
                     if state.install_variant == "wine" {
@@ -75,7 +64,6 @@ async fn main() {
                             thread::sleep(Duration::new(0, 500));
                         }
 
-                        state.show_successful_installation_message = true;
                     }
                 }
 
@@ -90,6 +78,5 @@ async fn main() {
 
 #[derive(Default)]
 struct State {
-    install_variant: &'static str,
-    show_successful_installation_message: bool
+    install_variant: &'static str
 }
