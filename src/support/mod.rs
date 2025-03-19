@@ -1,6 +1,6 @@
 use glium::glutin::surface::WindowSurface;
 use glium::{Display, Surface};
-use imgui::{Context, Font, FontAtlas, FontConfig, FontGlyphRanges, FontSource, Ui};
+use imgui::{Context, FontConfig, FontGlyphRanges, FontSource, Ui};
 use imgui_glium_renderer::Renderer;
 use imgui_winit_support::winit::dpi::LogicalSize;
 use imgui_winit_support::winit::event::{Event, WindowEvent};
@@ -14,8 +14,8 @@ mod clipboard;
 
 pub const FONT_SIZE: f32 = 16.0;
 
-pub static mut defaultFont: Option<imgui::FontId> = None;
-pub static mut titleFont: Option<imgui::FontId> = None;
+pub static mut DEFAULT_FONT: Option<imgui::FontId> = None;
+pub static mut TITLE_FONT: Option<imgui::FontId> = None;
 
 #[allow(dead_code)] // annoyingly, RA yells that this is unusued
 pub fn simple_init<F: FnMut(&mut bool, &mut Ui) + 'static>(title: &str, run_ui: F) {
@@ -129,7 +129,7 @@ pub fn create_context() -> imgui::Context {
     let mut imgui = Context::create();
 
 
-    unsafe { defaultFont = Some(imgui.fonts().add_font(&[
+    unsafe { DEFAULT_FONT = Some(imgui.fonts().add_font(&[
         FontSource::TtfData {
             data: include_bytes!("../../resources/Roboto-Regular.ttf"),
             size_pixels: FONT_SIZE,
@@ -143,7 +143,7 @@ pub fn create_context() -> imgui::Context {
         },
     ])) };
 
-    unsafe { titleFont = Some(imgui.fonts().add_font(&[
+    unsafe { TITLE_FONT = Some(imgui.fonts().add_font(&[
         FontSource::TtfData {
             data: include_bytes!("../../resources/Roboto-Regular.ttf"),
             size_pixels: 42.0,
