@@ -2,10 +2,11 @@ use std::process::exit;
 
 use imgui::*;
 use components::*;
+use install::install_geode;
 
 mod support;
 mod components;
-
+mod install;
 
 fn main() {
     let mut state = State::default();
@@ -51,7 +52,9 @@ fn main() {
 
 
                 ui.set_cursor_pos([10.0, 250.0]);
-                render_colored_btn(&ui, "Install", false);
+                if render_colored_btn(&ui, "Install", false) {
+                    
+                }
 
                 ui.set_cursor_pos([10.0, 300.0]);
                 if render_colored_btn(&ui, "Exit", true) {
