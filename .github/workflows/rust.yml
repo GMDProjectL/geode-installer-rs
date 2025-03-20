@@ -30,9 +30,8 @@ jobs:
       
       - name: Do musl workaround
         run: |
-          sudo ln -s /bin/g++ /bin/musl-g++
-          sudo ln -s /bin/gcc /bin/musl-gcc
-
+          which musl-gcc
+          which musl-g++
       
       - name: Get the latest Geode zipball
         run: |
