@@ -26,7 +26,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-requests musl-tools
+          sudo apt install -y python3-requests musl-tools musl-dev
+      
+      - name: Do musl workaround
+        run: |
+          sudo ln -s /bin/g++ /bin/musl-g++
+          sudo ln -s /bin/gcc /bin/musl-gcc
+
       
       - name: Get the latest Geode zipball
         run: |
