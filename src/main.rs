@@ -2,7 +2,7 @@ use std::{process::exit, thread, time::Duration};
 
 use imgui::*;
 use components::*;
-use install::install_using_wine;
+use install::{install_for_steam, install_using_wine};
 
 mod support;
 mod components;
@@ -61,6 +61,19 @@ async fn main() {
                         );
 
                         while !wine_installation_task.is_finished() {
+                            thread::sleep(Duration::new(0, 500));
+                        }
+
+                    }
+
+                    if state.install_variant == "steam" {
+                        let steam_installation_task = tokio::spawn(
+                            async move {
+                                let _ = install_for_steam().await;
+                            }
+                        );
+
+                        while !steam_installation_task.is_finished() {
                             thread::sleep(Duration::new(0, 500));
                         }
 
