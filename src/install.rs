@@ -48,7 +48,6 @@ pub async fn install_using_wine() -> Result<()> {
     std::fs::write(registry_path_string, registry_bytes).unwrap();
     std::process::Command::new("wine")
         .arg("regedit")
-        //.arg("/s")
         .arg(registry_path_string)
         .spawn()
         .unwrap();
@@ -76,11 +75,11 @@ pub async fn install_for_steam() -> std::result::Result<(), &'static str> {
 
     let user_reg_file = gd_pfx_directory.join("user.reg");
 
+    let replacement_anchor = "\"vcruntime140_1\"=\"native,builtin\"";
+    let replacement_ = replacement_anchor.to_owned() + "\n\"xinput1_4\"=\"native,builtin\"";
+
     let user_reg_file_content = std::fs::read_to_string(&user_reg_file).unwrap();
-    let new_content = user_reg_file_content.replace(
-        "\"vcruntime140_1\"=\"native,builtin\"", 
-        "\"vcruntime140_1\"=\"native,builtin\"\n\"xinput1_4\"=\"native,builtin\"",
-    );
+    let new_content = user_reg_file_content.replace(replacement_anchor, replacement_.as_str());
     std::fs::write(&user_reg_file, new_content).unwrap();
 
     return Ok(());

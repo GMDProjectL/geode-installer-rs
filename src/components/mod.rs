@@ -3,15 +3,15 @@ use support::TITLE_FONT;
 
 use crate::support;
 
-pub fn render_title(ui: &Ui) {
+pub fn render_title(ui: &Ui, title: &str) {
     let title_font_ptr = ui.push_font(unsafe { TITLE_FONT.unwrap() });
 
     let win_width = ui.window_size()[0];
-    let text_width = ui.calc_text_size("Geode Installer")[0];
+    let text_width = ui.calc_text_size(title)[0];
 
     ui.set_cursor_pos([(win_width - text_width) * 0.5, 20.0]);
 
-    ui.text("Geode Installer");
+    ui.text(title);
     title_font_ptr.pop();
 }
 

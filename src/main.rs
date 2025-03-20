@@ -23,7 +23,7 @@ async fn main() {
             .movable(false)
             .bg_alpha(0.0)
             .build(|| {
-                render_title(ui);
+                render_title(ui, "Geode Installer");
 
                 ui.set_cursor_pos([20.0, 75.0]);
 
