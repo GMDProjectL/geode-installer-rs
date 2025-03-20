@@ -18,8 +18,6 @@ jobs:
         include:
           - rust-target: x86_64-unknown-linux-musl
             os-arch: x86_64
-    env:
-      CROSS_SYSROOT: /mnt/alpine-${{ matrix.os-arch }}
     steps:
       - uses: actions/checkout@v1
 
