@@ -28,8 +28,9 @@ jobs:
       
       - name: Do musl workaround
         run: |
-          which musl-gcc
-          which musl-g++
+          sh -c "which musl-gcc"
+          sudo ln -s /usr/bin/musl-gcc /usr/bin/musl-g++
+          sh -c "which musl-g++"
       
       - name: Get the latest Geode zipball
         run: |
